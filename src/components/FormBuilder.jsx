@@ -234,7 +234,7 @@ const FormBuilder = () => {
                     marginBottom: '20px',
                     boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)'
                 }} />
-                <h2 style={{ color: '#fff', margin: '0' }}>Custom Form Builder</h2>
+                <h2 style={{ color: '#fff', margin: '0' }}>Custom Form Builder - (To Edit tap preview)</h2>
                 <p style={{ opacity: 0.7, marginTop: '5px' }}>Loading workspace...</p>
             </div>
         );
@@ -246,7 +246,7 @@ const FormBuilder = () => {
                 onDrop={(e) => handleExternalDrop(e, formFields.length)}
                 onDragLeave={() => setDropIndicatorIndex(-1)}>
                 {}
-                <h1>{isPreviewMode ? 'Form Preview' : 'Custom Form Builder'}</h1>
+                <h1>{isPreviewMode ? 'Form Preview' : 'Custom Form Builder - (To Enter Data tap preview)'}</h1>
                 {formSchema.map((field, index) => {
                     const currentFieldProps = {
                         field: field,
