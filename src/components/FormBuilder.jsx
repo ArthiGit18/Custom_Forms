@@ -246,7 +246,7 @@ const FormBuilder = () => {
                 onDrop={(e) => handleExternalDrop(e, formFields.length)}
                 onDragLeave={() => setDropIndicatorIndex(-1)}>
                 {}
-                <h1>{isPreviewMode ? 'Form Preview' : 'Custom Form Builder - (To Enter Data tap preview)'}</h1>
+                <h1>{isPreviewMode ? 'Form Preview - Enter Data' : 'Custom Form Builder - (To Enter Data tap preview)'}</h1>
                 {formSchema.map((field, index) => {
                     const currentFieldProps = {
                         field: field,
