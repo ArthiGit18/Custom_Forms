@@ -7,11 +7,7 @@ const STORAGE_KEY = 'customFormData';
 
 const FormBuilder = () => {
     const dispatch = useDispatch();
-    // Use formSchema to represent the structure from Redux
     const formSchema = useSelector((state) => state.form.formFields);
-    
-    // Note: formFields and formSchema reference the same Redux state, 
-    // but formSchema is clearer for mapping the structure.
     const formFields = formSchema; 
 
     const draggingFieldType = useSelector((state) => state.form.draggingFieldType);
@@ -19,35 +15,21 @@ const FormBuilder = () => {
     const [isReordering, setIsReordering] = useState(false);
     const [draggedFieldIndex, setDraggedFieldIndex] = useState(null);
     const [isPreviewMode, setIsPreviewMode] = useState(false);
-    // State for managing the dynamic background color
-    const [backgroundColor, setBackgroundColor] = useState('#f8f9fa'); // Default light grey background
-
-    // Local state for storing the ACTUAL form values entered by the user
+    const [backgroundColor, setBackgroundColor] = useState('#f8f9fa');
     const [formValues, setFormValues] = useState({});
-
-    // Define 4 color options (using light, readable shades)
-    const colorOptions = ['#e0f2fe', '#d1fae5', '#fef3c7', '#fee2e2']; // Light Blue, Green, Yellow, Red
-
-    // Handler to set the new background color
+    const colorOptions = ['#e0f2fe', '#d1fae5', '#fef3c7', '#fee2e2'];
     const handleColorChange = (color) => {
         setBackgroundColor(color);
     };
-
-    // --- Persistence (Load) ---
     useEffect(() => {
         const storedValues = localStorage.getItem(STORAGE_KEY);
         if (storedValues) {
             setFormValues(JSON.parse(storedValues));
         }
     }, []);
-
-    // --- Persistence (Save) ---
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(formValues));
     }, [formValues]);
-
-
-    // Handler to update form values when user types
     const handleValueChange = (fieldId, newValue) => {
         setFormValues(prevValues => ({
             ...prevValues,
@@ -55,19 +37,15 @@ const FormBuilder = () => {
         }));
     };
 
-    // --- Drag and Drop Handlers (All handlers remain correct) ---
-
     const handleExternalDragOver = (e, index = formFields.length) => {
         e.preventDefault();
         if (draggingFieldType && !isReordering) {
             setDropIndicatorIndex(index);
         }
     };
-
-    // FIX: Add e.stopPropagation() to prevent the drop event from bubbling up and triggering twice
     const handleExternalDrop = (e, index) => {
         e.preventDefault();
-        e.stopPropagation(); // <-- CRITICAL FIX
+        e.stopPropagation();
         const fieldType = e.dataTransfer.getData('fieldType');
         if (fieldType) {
             dispatch(addField({ type: fieldType, positionIndex: index }));
@@ -106,50 +84,38 @@ const FormBuilder = () => {
         }
         handleDragEnd();
     };
-
-    // --- Utility Functions ---
     const handleDownload = () => {
-        // 1. Process data into a report format
         const reportData = formSchema.map(field => {
-            // Get the raw stored value (e.g., "option_field-5_1" or ["option_a", "option_b"])
             const rawValue = formValues[field.id] !== undefined
                 ? formValues[field.id]
                 : field.value || null;
 
-            let displayValue = rawValue; // Default display value is the raw value
-
-            // Logic to convert internal value back to human-readable label(s) for options fields
+            let displayValue = rawValue;
             if (field.type === 'Radio Button' && rawValue !== null) {
-                // Find the option whose unique value matches the rawValue
                 const selectedOption = field.options?.find(opt => opt.value === rawValue);
                 if (selectedOption) {
-                    displayValue = selectedOption.label; // Use the human-readable label (e.g., "Female")
+                    displayValue = selectedOption.label;
                 }
             } else if (field.type === 'Checkbox' && Array.isArray(rawValue) && rawValue.length > 0) {
-                // For checkboxes, map all selected internal values to their labels
                 displayValue = field.options
                     .filter(opt => rawValue.includes(opt.value))
-                    .map(opt => opt.label); // displayValue becomes an array of labels
+                    .map(opt => opt.label);
             }
             
             return {
                 label: field.label,
                 type: field.type,
                 required: field.required,
-                value: displayValue, // Use the human-readable or processed value
+                value: displayValue,
             };
         });
-        
-        // 2. Format the data into an HTML string for PDF compatibility
         let reportItems = '';
         reportData.forEach((item, index) => {
             let valueString;
             
             if (Array.isArray(item.value)) {
-                // For checkboxes (array of labels)
                 valueString = item.value.length > 0 ? item.value.join(', ') : 'Not selected';
             } else if (item.value !== null && typeof item.value === 'object') {
-                // Handle complex objects like Name fields {firstName: '...', lastName: '...'}
                 const parts = Object.values(item.value)
                     .filter(val => val && typeof val === 'string')
                     .join(' ');
@@ -161,8 +127,6 @@ const FormBuilder = () => {
             } else {
                 valueString = String(item.value);
             }
-
-            // Create HTML structure for each field entry
             reportItems += `
                 <div class="field-entry">
                     <div class="field-header">${index + 1}. ${item.label}</div>
@@ -178,10 +142,25 @@ const FormBuilder = () => {
             <head>
                 <title>Form Submission Report</title>
                 <style>
-                    body { font-family: sans-serif; margin: 0; padding: 20px; color: #333; }
+                    body { 
+                        font-family: sans-serif; 
+                        margin: 0; 
+                        padding: 20px; 
+                        color: #333; 
+                        background-color: ${backgroundColor}; 
+                    }
                     .report-container { max-width: 800px; margin: 0 auto; }
-                    h1 { color: #1f2937; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 30px; }
-                    .field-entry { margin-bottom: 25px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 5px; }
+                    h1 { 
+                        color: #1f2937; 
+                        background-color: ${backgroundColor}; 
+                        border: 1px solid #ccc; 
+                        border-radius: 8px; 
+                        padding: 15px; 
+                        margin-bottom: 30px; 
+                        text-align: center; 
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+                    }
+                    .field-entry { margin-bottom: 25px; padding: 15px; border: 1px solid #e5e7eb; border-radius: 5px; background-color: white; }
                     .field-header { font-weight: bold; font-size: 1.1em; color: #4b5563; margin-bottom: 5px; }
                     .field-details { font-size: 0.9em; color: #6b7280; margin-bottom: 8px; }
                     .field-response { 
@@ -191,16 +170,21 @@ const FormBuilder = () => {
                         border-radius: 3px; 
                         white-space: pre-wrap; 
                         word-wrap: break-word; 
-                        border-left: 4px solid #3b82f6; /* Accent color for response */
+                        border-left: 4px solid #3b82f6; 
                     }
-                    /* Print specific styles */
+                    
                     @media print {
+                        body { background-color: #fff !important; } 
                         .field-entry { 
                             border: 1px solid #ccc;
                             page-break-inside: avoid;
                         }
                         .report-container { margin: 0; max-width: 100%; }
-                        h1 { border-bottom: 1px solid #ccc; }
+                        h1 { 
+                            background-color: ${backgroundColor} !important; 
+                            -webkit-print-color-adjust: exact; 
+                            color-adjust: exact;
+                        }
                     }
                 </style>
             </head>
@@ -212,14 +196,10 @@ const FormBuilder = () => {
             </body>
             </html>
         `;
-
-
-        // 3. Open a new window, write HTML content, and trigger the print dialog (Save as PDF)
         const printWindow = window.open('', '_blank');
         if (printWindow) {
             printWindow.document.write(htmlContent);
             printWindow.document.close();
-            // Wait for content to load before printing
             printWindow.onload = () => {
                 printWindow.focus();
                 printWindow.print();
@@ -234,22 +214,18 @@ const FormBuilder = () => {
     };
 
     return (
-        // Apply background color to the main wrapper
         <div className="form-builder-wrapper" style={{ backgroundColor: backgroundColor, transition: 'background-color 0.3s ease' }}>
             <div className={`form-builder-canvas ${isPreviewMode ? 'preview-mode' : ''}`}
                 onDragOver={(e) => handleExternalDragOver(e, formFields.length)}
                 onDrop={(e) => handleExternalDrop(e, formFields.length)}
                 onDragLeave={() => setDropIndicatorIndex(-1)}>
 
-                {/* Apply background color to the H1 heading */}
-                <h1 >{isPreviewMode ? 'Form Preview' : 'Custom Form Builder'}</h1>
+                {}
+                <h1>{isPreviewMode ? 'Form Preview' : 'Custom Form Builder'}</h1>
 
-                {formSchema.map((field, index) => { // Use map function directly
-                    
-                    // CRUCIAL: Define the props needed for both rendering modes here
+                {formSchema.map((field, index) => {
                     const currentFieldProps = {
                         field: field,
-                        // Get the value from local state, defaulting to Redux schema's value or empty string
                         currentValue: formValues[field.id] !== undefined 
                             ? formValues[field.id] 
                             : (field.value || ''), 
@@ -258,7 +234,7 @@ const FormBuilder = () => {
                     
                     return (
                         <React.Fragment key={field.id}>
-                            {/* Drop Indicator above the field */}
+                            {}
                             {dropIndicatorIndex === index && !isPreviewMode && <div className="drop-indicator" />}
 
                             <div
@@ -271,11 +247,10 @@ const FormBuilder = () => {
                                 onDragLeave={() => setDropIndicatorIndex(-1)}
                                 onDragEnd={handleDragEnd}
                             >
-                                {/* FIX: Pass all props to FormField in BOTH modes */}
+                                {}
                                 {isPreviewMode ? (
                                     <FormField.Render {...currentFieldProps} />
                                 ) : (
-                                    // In Build Mode, we pass the value to display it, but don't strictly need onChange
                                     <FormField {...currentFieldProps} /> 
                                 )}
                             </div>
@@ -283,7 +258,7 @@ const FormBuilder = () => {
                     );
                 })}
 
-                {/* Drop Indicator at the bottom */}
+                {}
                 {formFields.length > 0 && dropIndicatorIndex === formFields.length && !isPreviewMode && <div className="drop-indicator" />}
 
                 {formFields.length === 0 && (
@@ -294,7 +269,7 @@ const FormBuilder = () => {
             </div>
 
             <div className="builder-actions">
-                {/* Theme Color Selector */}
+                {}
                 <div className="color-selector" style={{ 
                     display: 'flex', 
                     gap: '10px', 
@@ -305,7 +280,6 @@ const FormBuilder = () => {
                     {colorOptions.map((color) => (
                         <div
                             key={color}
-                            // Inline styles for the color circles
                             style={{
                                 width: '28px',
                                 height: '28px',
@@ -333,3 +307,4 @@ const FormBuilder = () => {
 };
 
 export default FormBuilder;
+sfo
