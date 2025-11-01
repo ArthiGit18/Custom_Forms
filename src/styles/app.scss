@@ -1,0 +1,32 @@
+@import 'variables';
+@import 'sidebar';
+@import 'formbuilder';
+@import 'field';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: $color-text-dark;
+  background-color: $color-bg-canvas;
+}
+
+#root {
+  display: flex;
+  height: 100vh;
+  min-height: 700px;
+}
+
+.app-container {
+  display: flex;
+  width: 100%;
+}
+
+// Global button reset and style
+button {
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}

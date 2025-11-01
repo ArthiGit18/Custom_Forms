@@ -1,0 +1,66 @@
+// Basic layout & Zoho-like feel
+$app-bg: #f6f7fb;
+$card: #fff;
+$muted: #6b7280;
+$accent: #286ef0;
+
+* { box-sizing: border-box; }
+body, html, #root { height: 100%; margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: $app-bg; color: #111827; }
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.app-header { padding: 18px 22px; background: white; border-bottom: 1px solid #e6e9ef; display:flex; flex-direction:column; gap:6px; }
+.app-header h1 { margin: 0; font-size: 20px; }
+.header-sub { color: $muted; font-size: 13px; }
+
+.app-body { display: grid; grid-template-columns: 260px 1fr 360px; gap: 18px; padding: 18px; align-items: start; }
+
+.sidebar { background: $card; padding: 16px; border-radius: 8px; box-shadow: 0 1px 2px rgba(16,24,40,.03); height: calc(100vh - 170px); overflow:auto; }
+.sidebar h3 { margin: 0 0 10px 0; font-size: 16px; }
+.tool-list { display:flex; flex-direction: column; gap: 8px; }
+.tool-item { display:flex; gap:10px; padding: 8px; border:1px dashed transparent; border-radius: 6px; align-items:center; cursor:grab; background:#fbfdff; }
+.tool-item:active { cursor:grabbing; }
+.tool-item:hover { border-color: #e2e8f0; }
+.tool-icon { width:36px; height:36px; border-radius:6px; display:flex; align-items:center; justify-content:center; background:#eef2ff; color:$accent; font-weight:700; }
+.tool-label { font-weight:600; }
+.tool-sub { font-size:12px; color:$muted; }
+
+.sidebar-note { margin-top:16px; font-size:13px; color:$muted; }
+
+.canvas { background: $card; padding: 16px; border-radius: 8px; min-height: 60vh; overflow:auto; }
+.canvas-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; }
+.canvas-area { display:flex; flex-direction:column; gap: 12px; min-height: 300px; }
+.canvas-empty { color: $muted; padding: 28px; border: 2px dashed #eef2ff; border-radius: 8px; text-align:center; }
+
+.field-card { background: #fff; border:1px solid #eef2f7; padding:12px; border-radius:8px; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; box-shadow: 0 1px 4px rgba(16,24,40,.03); }
+.field-left { flex: 1; }
+.field-label { font-weight:600; margin-bottom:8px; }
+.field-controls { display:flex; gap:8px; align-items:center; }
+
+.option-row { display:flex; align-items:center; gap:8px; font-size:14px; color: #111827; }
+.btn { background: $accent; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor:pointer; }
+.btn.small { padding:6px 8px; font-size:13px; }
+.btn.secondary { background: #f3f4f6; color:#111827; }
+.btn.danger { background: #ef4444; }
+.btn.small.danger { padding:4px 8px; font-size:12px; }
+
+.editor-backdrop { position: fixed; inset: 0; background: rgba(2,6,23,0.35); display:flex; align-items:center; justify-content:center; z-index:60; }
+.editor { width:420px; max-width:95%; background:white; padding:16px; border-radius:10px; box-shadow: 0 10px 40px rgba(2,6,23,0.2); }
+.form-row { margin: 8px 0; display:flex; flex-direction:column; gap:6px; }
+.form-row.inline { flex-direction:row; align-items:center; }
+.form-label { color: $muted; font-size:13px; }
+.options-list { display:flex; flex-direction:column; gap:8px; }
+.option-edit-row { display:flex; gap:8px; align-items:center; }
+
+.editor-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+
+.preview { background: $card; padding: 16px; border-radius: 8px; height: calc(100vh - 170px); overflow:auto; position: relative; }
+.preview h3 { margin-top: 0; }
+.preview-form { display:flex; flex-direction:column; gap:12px; }
+.preview-field { background:#fafafa; padding:10px; border-radius:8px; border:1px solid #f1f5f9; }
+.preview-label { font-weight:600; display:block; margin-bottom:8px; }
+.required { color: #ef4444; margin-left:6px; }
+.preview-actions { margin-top:12px; display:flex; justify-content:flex-end; }
+
+.canvas-actions .btn.secondary { margin-left:8px; }
+
+.app-footer { margin-top:auto; text-align:center; padding:10px 0; font-size:13px; color:$muted; }

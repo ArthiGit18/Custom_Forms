@@ -1,0 +1,130 @@
+@import 'variables';
+
+.form-builder-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.form-builder-canvas {
+  flex-grow: 1;
+  padding: 50px 80px;
+  background-color: $color-bg-canvas;
+  overflow-y: auto;
+  position: relative;
+  
+  // Hide controls/editing features in preview mode
+  &.preview-mode {
+    .field-controls,
+    .drop-indicator,
+    .form-field-container:hover {
+        opacity: 0 !important;
+        pointer-events: none;
+    }
+    // In preview mode, allow interaction with actual inputs
+    .form-field-render input:disabled, 
+    .form-field-render textarea:disabled {
+        cursor: text;
+        background-color: $color-bg-white;
+        color: $color-text-dark;
+        border-color: $color-border-light;
+        pointer-events: auto !important;
+
+        opacity: 1; 
+        
+        // Ensure inputs are fully re-enabled
+        &[disabled] { 
+            pointer-events: auto !important;
+        }
+    }
+  }
+  
+  h1 {
+    font-size: 2.2em;
+    font-weight: 300;
+    color: $color-text-dark;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .field-wrapper {
+    position: relative;
+    padding: 10px 0;
+    cursor: grab;
+  }
+
+  .field-wrapper.dragging-source {
+    opacity: 0.3; 
+    border: 2px dashed #ccc;
+    // Hide the actual contents of the field component
+    .form-field-container {
+        visibility: hidden;
+    }
+  }
+
+  .empty-form-message {
+    text-align: center;
+    padding: 80px;
+    border: 2px dashed $color-border-light;
+    color: $color-secondary;
+    border-radius: 12px;
+    margin-top: 50px;
+    background-color: $color-bg-white;
+    font-size: 1.1em;
+  }
+
+  // Drop Indicator
+  .drop-indicator {
+    height: 6px;
+    background-color: $color-primary;
+    margin: 3px 0;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba($color-primary, 0.8);
+    animation: bounce-in 0.5s forwards;
+  }
+
+  @keyframes bounce-in {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+}
+
+// Action Buttons Bar at the Bottom
+.builder-actions {
+  flex-shrink: 0;
+  height: 70px;
+  background-color: $color-bg-white;
+  border-top: 1px solid $color-border-light;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 40px;
+  box-shadow: 0 -2px 10px $color-shadow;
+
+  button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    margin-left: 15px;
+    border: none;
+    transition: all 0.2s;
+    
+    i {
+      margin-right: 8px;
+    }
+  }
+
+  .preview-btn {
+    background-color: $color-secondary;
+    color: $color-bg-white;
+    &:hover { background-color: darken($color-secondary, 10%); }
+  }
+
+  .download-btn {
+    background-color: $color-primary;
+    color: $color-bg-white;
+    &:hover { background-color: darken($color-primary, 10%); }
+  }
+}
