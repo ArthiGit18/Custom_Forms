@@ -19,9 +19,19 @@ const FormBuilder = () => {
     const [isReordering, setIsReordering] = useState(false);
     const [draggedFieldIndex, setDraggedFieldIndex] = useState(null);
     const [isPreviewMode, setIsPreviewMode] = useState(false);
+    // State for managing the dynamic background color
+    const [backgroundColor, setBackgroundColor] = useState('#f8f9fa'); // Default light grey background
 
     // Local state for storing the ACTUAL form values entered by the user
     const [formValues, setFormValues] = useState({});
+
+    // Define 4 color options (using light, readable shades)
+    const colorOptions = ['#e0f2fe', '#d1fae5', '#fef3c7', '#fee2e2']; // Light Blue, Green, Yellow, Red
+
+    // Handler to set the new background color
+    const handleColorChange = (color) => {
+        setBackgroundColor(color);
+    };
 
     // --- Persistence (Load) ---
     useEffect(() => {
@@ -224,13 +234,15 @@ const FormBuilder = () => {
     };
 
     return (
-        <div className="form-builder-wrapper">
+        // Apply background color to the main wrapper
+        <div className="form-builder-wrapper" style={{ backgroundColor: backgroundColor, transition: 'background-color 0.3s ease' }}>
             <div className={`form-builder-canvas ${isPreviewMode ? 'preview-mode' : ''}`}
                 onDragOver={(e) => handleExternalDragOver(e, formFields.length)}
                 onDrop={(e) => handleExternalDrop(e, formFields.length)}
                 onDragLeave={() => setDropIndicatorIndex(-1)}>
 
-                <h1>{isPreviewMode ? 'Form Preview' : 'Custom Form Builder'}</h1>
+                {/* Apply background color to the H1 heading */}
+                <h1 >{isPreviewMode ? 'Form Preview' : 'Custom Form Builder'}</h1>
 
                 {formSchema.map((field, index) => { // Use map function directly
                     
@@ -282,6 +294,33 @@ const FormBuilder = () => {
             </div>
 
             <div className="builder-actions">
+                {/* Theme Color Selector */}
+                <div className="color-selector" style={{ 
+                    display: 'flex', 
+                    gap: '10px', 
+                    alignItems: 'center', 
+                    marginRight: '20px' 
+                }}>
+                    <span style={{ fontSize: '0.9em', color: '#4b5563', fontWeight: 'bold' }}>Theme:</span>
+                    {colorOptions.map((color) => (
+                        <div
+                            key={color}
+                            // Inline styles for the color circles
+                            style={{
+                                width: '28px',
+                                height: '28px',
+                                borderRadius: '50%',
+                                backgroundColor: color,
+                                cursor: 'pointer',
+                                boxShadow: backgroundColor === color ? '0 0 0 3px #333' : '0 0 0 1px #ccc',
+                                transition: 'box-shadow 0.2s ease, transform 0.1s ease',
+                                transform: backgroundColor === color ? 'scale(1.1)' : 'scale(1)',
+                            }}
+                            onClick={() => handleColorChange(color)}
+                        ></div>
+                    ))}
+                </div>
+                
                 <button className="preview-btn" onClick={togglePreview}>
                     <i className="fas fa-eye"></i> {isPreviewMode ? 'Exit Preview' : 'Preview'}
                 </button>
